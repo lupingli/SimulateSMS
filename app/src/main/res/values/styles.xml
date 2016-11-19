@@ -8,4 +8,8 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+
+    <!--没有标题栏主题-->
+    <style name="NoTitle" parent="@android:style/Theme.NoTitleBar"></style>
+
 </resources>
