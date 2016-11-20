@@ -4,6 +4,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+/**
+ * 所有活动基类
+ */
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
 
     @Override

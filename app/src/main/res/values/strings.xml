@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">SimulateSMS</string>
+    <string name="dialog_text">会话</string>
+    <string name="group_text">分组</string>
+    <string name="search_text">搜索</string>
+
+
 </resources>

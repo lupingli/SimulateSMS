@@ -6,10 +6,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
-
-    <!--没有标题栏主题-->
-    <style name="NoTitle" parent="@android:style/Theme.NoTitleBar"></style>
 
 </resources>
