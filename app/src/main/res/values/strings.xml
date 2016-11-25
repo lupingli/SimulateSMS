@@ -3,6 +3,11 @@
     <string name="dialog_text">会话</string>
     <string name="group_text">分组</string>
     <string name="search_text">搜索</string>
+    <string name="btn_edit">编辑</string>
+    <string name="btn_new_sms">新建短信</string>
+    <string name="btn_select_all_text">全选</string>
+    <string name="btn_select_cancel_text">取消选择</string>
+    <string name="btn_delete_text">删除</string>
 
 
 </resources>

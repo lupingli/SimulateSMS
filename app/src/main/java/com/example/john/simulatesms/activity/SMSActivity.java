@@ -1,6 +1,5 @@
 package com.example.john.simulatesms.activity;
 
-import android.animation.Animator;
 import android.animation.ObjectAnimator;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -29,7 +28,7 @@ import java.util.List;
  */
 
 public class SMSActivity extends BaseActivity {
-    private static final String TAG = "SMSActivity";
+    public static final String TAG = "SMSActivity";
     private final int animateDuration = 200;
     private ViewPager viewPager;
     private View viewLine;
@@ -105,7 +104,6 @@ public class SMSActivity extends BaseActivity {
                 } else {
                     ObjectAnimator.ofFloat(viewLine, "translationX", position * screenWidth / 3 + positionOffsetPixels / 3 + 2).setDuration(0).start();
                 }
-
             }
 
             /**
