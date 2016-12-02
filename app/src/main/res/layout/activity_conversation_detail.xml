@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_conversation_detail"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.example.john.simulatesms.activity.ConversationDetailActivity">
+
+
+    <include
+        layout="@layout/layout_titlebar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+
+    <ListView
+        android:id="@+id/lv_detail"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="5dp"
+        android:listSelector="@android:color/transparent"></ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="8dp">
+
+        <EditText
+            android:id="@+id/et_msg"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/colorWhite"
+            android:maxLines="3"
+            android:minHeight="32dp"
+            android:padding="2dp"
+            android:text="hafalfalfjalfjalfjalkfdjalksdfjaldjflajfalfjaljflafjalkfjafkljjlafjllka"
+            />
+
+        <Button
+            android:id="@+id/btn_send"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:minHeight="32dp"
+            android:text="@string/btn_send_text"/>
+
+    </LinearLayout>
+</LinearLayout>

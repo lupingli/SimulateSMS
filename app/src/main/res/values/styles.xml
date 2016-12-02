@@ -9,5 +9,13 @@
         <item name="windowNoTitle">true</item>
     </style>
 
+    <style name="CustomCheckboxTheme" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/checkbox_style</item>
+    </style>
+
+
+    <style name="ConfirmDialogStyle" parent="@android:style/Theme.Dialog">
+        <item name="android:windowBackground">@drawable/shape_dialog</item>
+    </style>
 
 </resources>

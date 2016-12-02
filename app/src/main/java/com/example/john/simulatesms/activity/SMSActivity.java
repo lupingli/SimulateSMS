@@ -102,7 +102,7 @@ public class SMSActivity extends BaseActivity {
                 if (position != 2) {
                     ObjectAnimator.ofFloat(viewLine, "translationX", (float) Math.floor((position * screenWidth + positionOffsetPixels) / 3)).setDuration(0).start();
                 } else {
-                    ObjectAnimator.ofFloat(viewLine, "translationX", position * screenWidth / 3 + positionOffsetPixels / 3 + 2).setDuration(0).start();
+                    ObjectAnimator.ofFloat(viewLine, "translationX", (float) Math.floor((position * screenWidth + positionOffsetPixels) / 3) + 2).setDuration(0).start();
                 }
             }
 
@@ -180,7 +180,6 @@ public class SMSActivity extends BaseActivity {
             case R.id.ll_search:
                 viewPager.setCurrentItem(2);
                 break;
-
         }
 
     }

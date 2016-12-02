@@ -1,22 +1,40 @@
 package com.example.john.simulatesms.fragment;
 
+import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.Nullable;
+import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CursorAdapter;
-import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.example.john.simulatesms.R;
+import com.example.john.simulatesms.activity.ConversationDetailActivity;
+import com.example.john.simulatesms.activity.SMSActivity;
+import com.example.john.simulatesms.activity.SendNewSmsActivity;
 import com.example.john.simulatesms.adapter.ConversationCursorAdapter;
 import com.example.john.simulatesms.app.SimulateSMSApplication;
 import com.example.john.simulatesms.dao.SimpleQueryHandler;
+import com.example.john.simulatesms.dialog.ConfirmDialog;
+import com.example.john.simulatesms.dialog.DeleteDialog;
+import com.example.john.simulatesms.entity.Conversation;
+import com.example.john.simulatesms.interfaces.OnConfirmListener;
+import com.example.john.simulatesms.interfaces.OnDeleteListener;
 import com.example.john.simulatesms.util.ConstantUtil;
+import com.example.john.simulatesms.util.LogUtil;
 import com.nineoldandroids.view.ViewPropertyAnimator;
+
+import java.util.List;
 
 /**
  * Created by John on 2016/11/20.
@@ -32,6 +50,10 @@ public class ConversationFragment extends BaseFragment {
      * 常量
      */
     public static final int QUERY_TOKEN = 0;
+
+    private static final int DELETE_SUCCESS = 0;
+    private static final int DELETE_PROGRESS = 1;
+
     /**
      * 选择菜单中按钮
      */
@@ -56,6 +78,35 @@ public class ConversationFragment extends BaseFragment {
 
     private ListView listView;
 
+    private ConversationCursorAdapter adapter;
+
+    private SimpleQueryHandler simpleQueryHandler;
+
+    private List<String> selectedConversations;
+
+    private DeleteDialog dialog;
+
+    private boolean isInterrupt;
+
+
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case DELETE_SUCCESS:
+                    adapter.setShowSelected(false);
+                    adapter.notifyDataSetChanged();
+                    showSelectionMenu();
+                    dialog.dismiss();
+                    break;
+
+                case DELETE_PROGRESS:
+                    dialog.updateDeleteProgress(msg.arg1 + 1);
+                    break;
+            }
+        }
+    };
+
     @Override
 
     public View initView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -75,13 +126,25 @@ public class ConversationFragment extends BaseFragment {
 
     @Override
     public void initData() {
+        LogUtil.d(SMSActivity.TAG, "test");
         //查询会话信息
-        ConversationCursorAdapter adapter = new ConversationCursorAdapter(SimulateSMSApplication.getContext(), null, CursorAdapter.FLAG_AUTO_REQUERY);
+        adapter = new ConversationCursorAdapter(SimulateSMSApplication.getContext(), null, CursorAdapter.FLAG_AUTO_REQUERY);
+
+        selectedConversations = adapter.getSelectedConversation();
+        //listView设置适配器（CursorAdapter）
         listView.setAdapter(adapter);
-
-
-        SimpleQueryHandler simpleQueryHandler = new SimpleQueryHandler(getActivity().getContentResolver());
-        simpleQueryHandler.startQuery(QUERY_TOKEN, adapter, ConstantUtil.URI.CONVERSATION_URL, null, null, null, null);
+        //重新构造查询的列
+        String[] projection = new String[]{
+                "sms._id as _id",
+                "sms.thread_id as thread_id",
+                "sms.body as snippet",
+                "groups.msg_count as msg_count",
+                "sms.address as address",
+                "sms.date as date"
+        };
+        simpleQueryHandler = new SimpleQueryHandler(getActivity().getContentResolver());
+        //
+        simpleQueryHandler.startQuery(QUERY_TOKEN, adapter, ConstantUtil.URI.CONVERSATION_URL, projection, null, null, "date desc");
     }
 
     @Override
@@ -93,20 +156,128 @@ public class ConversationFragment extends BaseFragment {
         btnSelectCancel.setOnClickListener(this);
         btnDelete.setOnClickListener(this);
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (adapter.isShowSelected()) {
+                    adapter.getSingleConversation(i);
+                } else {
+                    //显示会话详细信息
+                    Cursor cursor = (Cursor) adapter.getItem(i);
+                    Conversation conversation = Conversation.createFromCursor(cursor);
+                    ConversationDetailActivity.actionStart(getActivity(), conversation.getAddress(), conversation.getName(), conversation.getThread_id());
+                }
+            }
+        });
+
     }
 
     @Override
     public void handleClickEvent(View view) {
         switch (view.getId()) {
             case R.id.ll_conversation_btn_edit:
-                ViewPropertyAnimator.animate(selectionMenu).translationY(150.0f).setDuration(ANIMATIONN_TIME).start();
-                ViewPropertyAnimator.animate(operationMenu).translationY(-1.0f).setDuration(ANIMATIONN_TIME).start();
-
+                showOperationMenu();
+                adapter.setShowSelected(true);
+                adapter.notifyDataSetChanged();
                 break;
+
             case R.id.ll_conversation_btn_select_cancel:
-                ViewPropertyAnimator.animate(selectionMenu).translationY(-1.0f).setDuration(ANIMATIONN_TIME).start();
-                ViewPropertyAnimator.animate(operationMenu).translationY(150.0f).setDuration(ANIMATIONN_TIME).start();
+                showSelectionMenu();
+                adapter.setShowSelected(false);
+                adapter.canceleddAllConversation();
+                adapter.notifyDataSetChanged();
+                break;
+
+            case R.id.ll_conversation_btn_select_all:
+                adapter.selectedAllConversation();
+                break;
+
+            //删除所选中的短信
+            case R.id.ll_conversation_btn_delete:
+                if (selectedConversations.size() == 0) {
+                    return;
+                } else {
+                    ConfirmDialog.showConfirmDialog(getContext(), "提示", "确定要删除？", new OnConfirmListener() {
+                        @Override
+                        public void onOk() {
+                            //删除选中的信息
+                            deleteSms(selectedConversations);
+                        }
+
+                        @Override
+                        public void onCancel() {
+
+                        }
+                    });
+                    break;
+                }
+            case R.id.ll_conversation_btn_new_sms:
+                SendNewSmsActivity.actionStart(getActivity());
                 break;
         }
+    }
+
+    /**
+     * 显示选择菜单
+     */
+
+    private void showSelectionMenu() {
+        ViewPropertyAnimator.animate(selectionMenu).translationY(0).setDuration(ANIMATIONN_TIME);
+        ViewPropertyAnimator.animate(operationMenu).translationY(operationMenu.getHeight()).setDuration(ANIMATIONN_TIME);
+    }
+
+
+    /**
+     * 显示操作菜单
+     */
+    private void showOperationMenu() {
+        ViewPropertyAnimator.animate(selectionMenu).translationY(selectionMenu.getHeight()).setDuration(ANIMATIONN_TIME);
+        ViewPropertyAnimator.animate(operationMenu).translationY(0).setDuration(ANIMATIONN_TIME);
+    }
+
+    private void deleteSms(final List<String> threadIds) {
+
+        //子线程创建对话框
+        dialog = DeleteDialog.showDeleteDialog(getActivity(), selectedConversations.size(), new OnDeleteListener() {
+            @Override
+            public void interruptOperation() {
+                //进行中断操作
+                isInterrupt = true;
+
+            }
+        });
+
+
+        LogUtil.d(SMSActivity.TAG, "hello");
+        new Thread() {
+            @Override
+            public void run() {
+
+                for (int i = 0; i < threadIds.size(); i++) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (isInterrupt) {
+                        isInterrupt = false;
+                        break;
+                    }
+                    getActivity().getContentResolver().delete(ConstantUtil.URI.CONVERSATION_DELETE_URL, "thread_id=?", new String[]{threadIds.get(i)});
+                    LogUtil.d(SMSActivity.TAG, "delete");
+                    Message msg = Message.obtain();
+                    msg.what = DELETE_PROGRESS;
+                    msg.arg1 = i;
+                    handler.sendMessage(msg);
+                }
+                //必须要添加
+                threadIds.clear();
+                //删除完成发送消息
+                Message msg = Message.obtain();
+                msg.what = DELETE_SUCCESS;
+                handler.sendMessage(msg);
+            }
+        }.start();
     }
 }
