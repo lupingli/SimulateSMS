@@ -2,20 +2,15 @@ package com.example.john.simulatesms.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.graphics.drawable.BitmapDrawable;
-import android.os.AsyncTask;
 import android.support.v4.widget.CursorAdapter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.john.simulatesms.R;
-import com.example.john.simulatesms.activity.SMSActivity;
 import com.example.john.simulatesms.entity.Conversation;
-import com.example.john.simulatesms.util.LogUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +21,7 @@ import java.util.List;
  * 控制数据显示
  */
 
-public class ConversationCursorAdapter extends CursorAdapter {
+public class ConversationAdapter extends CursorAdapter {
 
     /**
      * 是否显示选择菜单
@@ -46,7 +41,7 @@ public class ConversationCursorAdapter extends CursorAdapter {
     }
 
 
-    public ConversationCursorAdapter(Context context, Cursor c, int flags) {
+    public ConversationAdapter(Context context, Cursor c, int flags) {
         super(context, c, flags);
     }
 
@@ -144,6 +139,16 @@ public class ConversationCursorAdapter extends CursorAdapter {
             selectedConversation.add(thread_id);
         }
         notifyDataSetChanged();
+    }
+
+    /**
+     * 得到条目
+     *
+     * @param pos
+     * @return
+     */
+    public Conversation getConversation(int pos) {
+        return Conversation.createFromCursor((Cursor) getItem(pos));
     }
 
     /**

@@ -16,21 +16,15 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-<<<<<<< HEAD
-        <activity android:name=".activity.SMSActivity">
-=======
-        <activity android:name=".MainActivity">
->>>>>>> parent of 3d22fe5... 创建BaseActivity
+        <activity android:name=".ui.activity.SMSActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
-<<<<<<< HEAD
-                <category android:name="android.intent.category.DEFAULT"/>
             </intent-filter>
         </activity>
         <activity
-            android:name=".activity.ConversationDetailActivity"
+            android:name=".ui.activity.ConversationDetailActivity"
             android:windowSoftInputMode="adjustResize|stateUnspecified">
         </activity>
 
@@ -40,7 +34,7 @@
             android:exported="true">
         </receiver>
 
-        <activity android:name=".activity.SendNewSmsActivity">
+        <activity android:name=".ui.activity.SendNewSmsActivity">
         </activity>
 
         <provider
@@ -49,10 +43,9 @@
             android:enabled="true"
             android:exported="true">
         </provider>
-=======
-            </intent-filter>
+
+        <activity android:name=".ui.activity.GroupThreadActivity">
         </activity>
->>>>>>> parent of 3d22fe5... 创建BaseActivity
     </application>
 
 </manifest>

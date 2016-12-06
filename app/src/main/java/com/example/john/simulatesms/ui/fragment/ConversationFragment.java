@@ -1,14 +1,10 @@
-package com.example.john.simulatesms.fragment;
+package com.example.john.simulatesms.ui.fragment;
 
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v4.app.NotificationCompat;
-import android.text.TextUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,12 +13,20 @@ import android.widget.Button;
 import android.widget.CursorAdapter;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.john.simulatesms.R;
-import com.example.john.simulatesms.activity.ConversationDetailActivity;
-import com.example.john.simulatesms.activity.SMSActivity;
-import com.example.john.simulatesms.activity.SendNewSmsActivity;
-import com.example.john.simulatesms.adapter.ConversationCursorAdapter;
+import com.example.john.simulatesms.dao.GroupDao;
+import com.example.john.simulatesms.dao.GroupMappingThreadDao;
+import com.example.john.simulatesms.dao.SmsDao;
+import com.example.john.simulatesms.dialog.InputDialog;
+import com.example.john.simulatesms.dialog.ListDialog;
+import com.example.john.simulatesms.entity.Group;
+import com.example.john.simulatesms.entity.GroupMappingThread;
+import com.example.john.simulatesms.ui.activity.ConversationDetailActivity;
+import com.example.john.simulatesms.ui.activity.SMSActivity;
+import com.example.john.simulatesms.ui.activity.SendNewSmsActivity;
+import com.example.john.simulatesms.adapter.ConversationAdapter;
 import com.example.john.simulatesms.app.SimulateSMSApplication;
 import com.example.john.simulatesms.dao.SimpleQueryHandler;
 import com.example.john.simulatesms.dialog.ConfirmDialog;
@@ -78,7 +82,7 @@ public class ConversationFragment extends BaseFragment {
 
     private ListView listView;
 
-    private ConversationCursorAdapter adapter;
+    private ConversationAdapter adapter;
 
     private SimpleQueryHandler simpleQueryHandler;
 
@@ -128,7 +132,7 @@ public class ConversationFragment extends BaseFragment {
     public void initData() {
         LogUtil.d(SMSActivity.TAG, "test");
         //查询会话信息
-        adapter = new ConversationCursorAdapter(SimulateSMSApplication.getContext(), null, CursorAdapter.FLAG_AUTO_REQUERY);
+        adapter = new ConversationAdapter(SimulateSMSApplication.getContext(), null, CursorAdapter.FLAG_AUTO_REQUERY);
 
         selectedConversations = adapter.getSelectedConversation();
         //listView设置适配器（CursorAdapter）
@@ -167,6 +171,58 @@ public class ConversationFragment extends BaseFragment {
                     Conversation conversation = Conversation.createFromCursor(cursor);
                     ConversationDetailActivity.actionStart(getActivity(), conversation.getAddress(), conversation.getName(), conversation.getThread_id());
                 }
+            }
+        });
+
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                if (!adapter.isShowSelected()) {
+                    if (GroupDao.hasData(getActivity().getContentResolver())) {
+                        final Conversation conversation = adapter.getConversation(i);
+                        LogUtil.d(SMSActivity.TAG, "thread_id==" + conversation.getThread_id());
+                        String name = GroupMappingThreadDao.getGroupNameByThreadId(getActivity().getContentResolver(), Integer.valueOf(conversation.getThread_id()));
+
+                        LogUtil.d(SMSActivity.TAG, "name===" + name);
+                        if (name == null) {
+                            //没有找到
+                            ListDialog.showDialog(getActivity(), "请选择分组", GroupDao.getAllGroup(getActivity().getContentResolver()), new ListDialog.OnListDialogListener() {
+                                @Override
+                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                    Group group = GroupFragment.adapter.getSingleGroup(i);
+                                    group.setThread_count(group.getThread_count() + 1);
+                                    GroupDao.update(getActivity().getContentResolver(), group);
+                                    //
+                                    GroupMappingThread groupMappingThread = new GroupMappingThread();
+                                    groupMappingThread.setGroup_id(group.get_id());
+                                    groupMappingThread.setThread_id(Integer.valueOf(conversation.getThread_id()));
+                                    GroupMappingThreadDao.insert(getActivity().getContentResolver(), groupMappingThread);
+                                }
+                            });
+                        } else {
+                            //找到了
+                            String msg = "该会话属于【" + name + "】分组,是否要将其移除？";
+                            ConfirmDialog.showConfirmDialog(getActivity(), "提示", msg, new OnConfirmListener() {
+                                @Override
+                                public void onOk() {
+                                    int groupId = GroupMappingThreadDao.getGroupIdByThreadId(getActivity().getContentResolver(), Integer.valueOf(conversation.getThread_id()));
+                                    Group group = GroupDao.getGroupById(getActivity().getContentResolver(), groupId);
+                                    group.setThread_count(group.getThread_count() - 1);
+                                    GroupDao.update(getActivity().getContentResolver(), group);
+                                    GroupMappingThreadDao.deleteByThreadId(getActivity().getContentResolver(), Integer.valueOf(conversation.getThread_id()));
+                                }
+
+                                @Override
+                                public void onCancel() {
+
+                                }
+                            });
+                        }
+                    } else {
+                        Toast.makeText(getContext(), "没有可选分组，请添加", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                return true;
             }
         });
 

@@ -1,9 +1,8 @@
 package com.example.john.simulatesms.util;
 
 import android.database.Cursor;
-import android.provider.Telephony;
 
-import com.example.john.simulatesms.activity.SMSActivity;
+import com.example.john.simulatesms.ui.activity.SMSActivity;
 
 /**
  * Created by John on 2016/11/22.

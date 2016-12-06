@@ -1,6 +1,5 @@
 package com.example.john.simulatesms.dialog;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.view.View;
 import android.widget.Button;
@@ -8,7 +7,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.example.john.simulatesms.R;
-import com.example.john.simulatesms.activity.SMSActivity;
+import com.example.john.simulatesms.ui.activity.SMSActivity;
 import com.example.john.simulatesms.interfaces.OnDeleteListener;
 import com.example.john.simulatesms.util.LogUtil;
 

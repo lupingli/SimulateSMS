@@ -1,4 +1,4 @@
-package com.example.john.simulatesms.activity;
+package com.example.john.simulatesms.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -13,7 +13,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.example.john.simulatesms.R;
-import com.example.john.simulatesms.adapter.ConversationDetailCursorAdapter;
+import com.example.john.simulatesms.adapter.ConversationDetailAdapter;
 import com.example.john.simulatesms.dao.SimpleQueryHandler;
 import com.example.john.simulatesms.dao.SmsDao;
 import com.example.john.simulatesms.util.ConstantUtil;
@@ -28,7 +28,7 @@ public class ConversationDetailActivity extends BaseActivity {
     private String threadId;
     private ListView conversationDetail;
     private Button btnSend;
-    private ConversationDetailCursorAdapter adapter;
+    private ConversationDetailAdapter adapter;
     private SimpleQueryHandler simpleQueryHandler;
     private String name;
 
@@ -75,7 +75,7 @@ public class ConversationDetailActivity extends BaseActivity {
 
         tvTitleMsg.setText(name == null ? address : name);
         //查询短信
-        adapter = new ConversationDetailCursorAdapter(this, null, CursorAdapter.FLAG_AUTO_REQUERY, conversationDetail);
+        adapter = new ConversationDetailAdapter(this, null, CursorAdapter.FLAG_AUTO_REQUERY, conversationDetail);
         conversationDetail.setAdapter(adapter);
         simpleQueryHandler = new SimpleQueryHandler(getContentResolver());
         String[] projection = new String[]{

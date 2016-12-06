@@ -10,10 +10,10 @@ public class TableUtil {
      * _id,group_name,create_date,thread_count
      */
     public interface TableGroup {
-        String CREATE_TABLE = "create table [group]" +
+        String CREATE_TABLE = "create table groups" +
                 " (_id integer primary key autoincrement ," +
-                " group_name text , " +
-                "create_date timestamp not null default (datetime('now','localtime'))," +
+                " group_name varchar , " +
+                "create_date integer," +
                 "thread_count integer)";
 
         //字段

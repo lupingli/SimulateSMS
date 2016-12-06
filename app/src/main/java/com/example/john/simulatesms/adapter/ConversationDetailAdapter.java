@@ -18,13 +18,13 @@ import com.example.john.simulatesms.util.ConstantUtil;
  * Created by John on 2016/11/28.
  */
 
-public class ConversationDetailCursorAdapter extends CursorAdapter {
+public class ConversationDetailAdapter extends CursorAdapter {
 
     private final int SMS_DURATION = 3 * 60 * 1000;
     private ListView listView;
 
 
-    public ConversationDetailCursorAdapter(Context context, Cursor c, int flags, ListView listView) {
+    public ConversationDetailAdapter(Context context, Cursor c, int flags, ListView listView) {
         super(context, c, flags);
         this.listView = listView;
     }

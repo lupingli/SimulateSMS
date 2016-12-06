@@ -14,6 +14,8 @@ import com.example.john.simulatesms.dao.GroupOpenHelper;
 public class GroupProvider extends ContentProvider {
     private final static String AUTHORITY = "com.cn.group.provider";
     public final static Uri BASE_URI = Uri.parse("content://" + AUTHORITY);
+    private static final String TABLE_GROUP = "groups";
+    private static final String TABLE_GROUP_MAPPING_THREAD = "group_mapping_thread";
     private static UriMatcher matcher;
     private final static int GROUP_ITEM = 0;
     private final static int GROUP_DIR = 1;
@@ -27,8 +29,8 @@ public class GroupProvider extends ContentProvider {
 
     static {
         matcher = new UriMatcher(UriMatcher.NO_MATCH);
-        matcher.addURI(AUTHORITY, "group/#", GROUP_ITEM);
-        matcher.addURI(AUTHORITY, "group", GROUP_DIR);
+        matcher.addURI(AUTHORITY, "groups/#", GROUP_ITEM);
+        matcher.addURI(AUTHORITY, "groups", GROUP_DIR);
 
         matcher.addURI(AUTHORITY, "group_mapping_thread/#", GROUP_MAPPING_THREAD_ITEM);
         matcher.addURI(AUTHORITY, "group_mapping_thread", GROUP_MAPPING_THREAD_DIR);
@@ -40,18 +42,18 @@ public class GroupProvider extends ContentProvider {
         int rowId = 0;
         switch (matcher.match(uri)) {
             case GROUP_DIR:
-                rowId = db.delete("group", selection, selectionArgs);
+                rowId = db.delete(TABLE_GROUP, selection, selectionArgs);
                 break;
             case GROUP_ITEM:
                 String group_id = uri.getPathSegments().get(1);
-                rowId = db.delete("group", "_id=?", new String[]{group_id});
+                rowId = db.delete(TABLE_GROUP, "_id=?", new String[]{group_id});
                 break;
             case GROUP_MAPPING_THREAD_DIR:
-                rowId = db.delete("group_mapping_thread", selection, selectionArgs);
+                rowId = db.delete(TABLE_GROUP_MAPPING_THREAD, selection, selectionArgs);
                 break;
             case GROUP_MAPPING_THREAD_ITEM:
                 String group_mapping_thread_id = uri.getPathSegments().get(1);
-                db.delete("group_mapping_thread", "_id=?", new String[]{group_mapping_thread_id});
+                db.delete(TABLE_GROUP_MAPPING_THREAD, "_id=?", new String[]{group_mapping_thread_id});
                 break;
         }
         getContext().getContentResolver().notifyChange(BASE_URI, null);
@@ -76,18 +78,17 @@ public class GroupProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        Uri newUri = null;
         Long rowId = 0L;
         switch (matcher.match(uri)) {
             case GROUP_DIR:
-                rowId = db.insert("group", null, values);
+                rowId = db.insert(TABLE_GROUP, null, values);
                 break;
             case GROUP_MAPPING_THREAD_DIR:
-                rowId = db.insert("group_mapping_thread", null, values);
+                rowId = db.insert(TABLE_GROUP_MAPPING_THREAD, null, values);
                 break;
         }
         getContext().getContentResolver().notifyChange(BASE_URI, null);
-        return newUri.withAppendedPath(newUri, rowId.toString());
+        return Uri.withAppendedPath(uri, rowId.toString());
     }
 
     @Override
@@ -102,20 +103,20 @@ public class GroupProvider extends ContentProvider {
         Cursor cursor = null;
         switch (matcher.match(uri)) {
             case GROUP_DIR:
-                cursor = db.query("group", projection, selection, selectionArgs, null, null, sortOrder);
+                cursor = db.query(TABLE_GROUP, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
             case GROUP_ITEM:
                 String group_id = uri.getPathSegments().get(1);
-                cursor = db.query("group", null, "_id=" + group_id, null, null, null, sortOrder);
+                cursor = db.query(TABLE_GROUP, null, "_id=" + group_id, null, null, null, sortOrder);
                 break;
 
             case GROUP_MAPPING_THREAD_ITEM:
                 String group_mapping_thread_id = uri.getPathSegments().get(1);
-                cursor = db.query("group_mapping_thread", null, "_id=" + group_mapping_thread_id, null, null, null, sortOrder);
+                cursor = db.query(TABLE_GROUP_MAPPING_THREAD, null, "_id=" + group_mapping_thread_id, null, null, null, sortOrder);
                 break;
 
             case GROUP_MAPPING_THREAD_DIR:
-                cursor = db.query("group_mapping_thread", projection, selection, selectionArgs, null, null, sortOrder);
+                cursor = db.query(TABLE_GROUP_MAPPING_THREAD, projection, selection, selectionArgs, null, null, sortOrder);
                 break;
         }
         cursor.setNotificationUri(getContext().getContentResolver(), BASE_URI);
@@ -129,18 +130,18 @@ public class GroupProvider extends ContentProvider {
         switch (matcher.match(uri)) {
             case GROUP_DIR:
                 //更新所有条目
-                rowId = db.update("group", values, selection, selectionArgs);
+                rowId = db.update(TABLE_GROUP, values, selection, selectionArgs);
                 break;
             case GROUP_ITEM:
                 String group_id = uri.getPathSegments().get(1);
-                rowId = db.update("group", values, "_id=?", new String[]{group_id});
+                rowId = db.update(TABLE_GROUP, values, "_id=?", new String[]{group_id});
                 break;
             case GROUP_MAPPING_THREAD_DIR:
-                rowId = db.update("group_mapping_thread", values, selection, selectionArgs);
+                rowId = db.update(TABLE_GROUP_MAPPING_THREAD, values, selection, selectionArgs);
                 break;
             case GROUP_MAPPING_THREAD_ITEM:
                 String group_mapping_thread_id = uri.getPathSegments().get(1);
-                rowId = db.update("group_mapping_thread", values, "_id=?", new String[]{group_mapping_thread_id});
+                rowId = db.update(TABLE_GROUP_MAPPING_THREAD, values, "_id=?", new String[]{group_mapping_thread_id});
                 break;
         }
         getContext().getContentResolver().notifyChange(BASE_URI, null);

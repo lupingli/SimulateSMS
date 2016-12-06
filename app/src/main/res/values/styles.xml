@@ -13,12 +13,9 @@
         <item name="android:button">@drawable/checkbox_style</item>
     </style>
 
-<<<<<<< HEAD
 
     <style name="ConfirmDialogStyle" parent="@android:style/Theme.Dialog">
         <item name="android:windowBackground">@drawable/shape_dialog</item>
     </style>
 
-=======
->>>>>>> parent of 3d22fe5... 创建BaseActivity
 </resources>

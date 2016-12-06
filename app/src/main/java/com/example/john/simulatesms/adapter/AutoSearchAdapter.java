@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.example.john.simulatesms.R;
-import com.example.john.simulatesms.activity.SendNewSmsActivity;
+import com.example.john.simulatesms.ui.activity.SendNewSmsActivity;
 import com.example.john.simulatesms.util.StringUtil;
 
 /**

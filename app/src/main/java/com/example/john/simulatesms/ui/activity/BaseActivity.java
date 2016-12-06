@@ -1,4 +1,4 @@
-package com.example.john.simulatesms.activity;
+package com.example.john.simulatesms.ui.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

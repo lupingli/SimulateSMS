@@ -1,4 +1,4 @@
-package com.example.john.simulatesms.fragment;
+package com.example.john.simulatesms.ui.fragment;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;

@@ -1,4 +1,4 @@
-package com.example.john.simulatesms.activity;
+package com.example.john.simulatesms.ui.activity;
 
 import android.animation.ObjectAnimator;
 import android.support.v4.app.Fragment;
@@ -12,9 +12,9 @@ import android.widget.TextView;
 
 import com.example.john.simulatesms.R;
 import com.example.john.simulatesms.adapter.MainPageAdapter;
-import com.example.john.simulatesms.fragment.ConversationFragment;
-import com.example.john.simulatesms.fragment.GroupFragment;
-import com.example.john.simulatesms.fragment.SearchFragment;
+import com.example.john.simulatesms.ui.fragment.ConversationFragment;
+import com.example.john.simulatesms.ui.fragment.GroupFragment;
+import com.example.john.simulatesms.ui.fragment.SearchFragment;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 
 import java.util.ArrayList;
@@ -44,6 +44,9 @@ public class SMSActivity extends BaseActivity {
     private LinearLayout llConversation;
     private LinearLayout llGroup;
     private LinearLayout llSearch;
+    private ConversationFragment conversationFragment;
+    private GroupFragment groupFragment;
+    private SearchFragment searchFragment;
 
 
     @Override
@@ -73,9 +76,12 @@ public class SMSActivity extends BaseActivity {
 
         FragmentManager fm = getSupportFragmentManager();
         List<Fragment> fragments = new ArrayList<>();
-        fragments.add(new ConversationFragment());
-        fragments.add(new GroupFragment());
-        fragments.add(new SearchFragment());
+        conversationFragment = new ConversationFragment();
+        fragments.add(conversationFragment);
+        groupFragment = new GroupFragment();
+        fragments.add(groupFragment);
+        searchFragment = new SearchFragment();
+        fragments.add(searchFragment);
         mainPageAdapter = new MainPageAdapter(fm, fragments);
         viewPager.setAdapter(mainPageAdapter);
     }

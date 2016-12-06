@@ -3,17 +3,13 @@ package com.example.john.simulatesms.dao;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.widget.Adapter;
-import android.widget.CursorAdapter;
 
-import com.example.john.simulatesms.activity.ConversationDetailActivity;
-import com.example.john.simulatesms.activity.SMSActivity;
-import com.example.john.simulatesms.activity.SendNewSmsActivity;
-import com.example.john.simulatesms.adapter.AutoSearchAdapter;
-import com.example.john.simulatesms.adapter.ConversationCursorAdapter;
-import com.example.john.simulatesms.adapter.ConversationDetailCursorAdapter;
-import com.example.john.simulatesms.fragment.ConversationFragment;
-import com.example.john.simulatesms.util.LogUtil;
+import com.example.john.simulatesms.ui.activity.ConversationDetailActivity;
+import com.example.john.simulatesms.adapter.ConversationAdapter;
+import com.example.john.simulatesms.adapter.ConversationDetailAdapter;
+import com.example.john.simulatesms.adapter.GroupAdapter;
+import com.example.john.simulatesms.ui.fragment.ConversationFragment;
+import com.example.john.simulatesms.ui.fragment.GroupFragment;
 
 /**
  * Created by John on 2016/11/23.
@@ -27,20 +23,27 @@ public class SimpleQueryHandler extends AsyncQueryHandler {
 
     @Override
     protected void onQueryComplete(int token, Object cookie, Cursor cursor) {
+
         switch (token) {
             case ConversationFragment.QUERY_TOKEN:
-                if (cookie != null && cookie instanceof ConversationCursorAdapter) {
-                    ConversationCursorAdapter adapter = (ConversationCursorAdapter) cookie;
+                if (cookie != null && cookie instanceof ConversationAdapter) {
+                    ConversationAdapter adapter = (ConversationAdapter) cookie;
                     adapter.changeCursor(cursor);
                 }
                 break;
             case ConversationDetailActivity.QUERY_CONVERSATION_DETAIL_TOKEN:
-                if (cookie != null && cookie instanceof ConversationDetailCursorAdapter) {
-                    ConversationDetailCursorAdapter adapter = (ConversationDetailCursorAdapter) cookie;
+                if (cookie != null && cookie instanceof ConversationDetailAdapter) {
+                    ConversationDetailAdapter adapter = (ConversationDetailAdapter) cookie;
+                    adapter.changeCursor(cursor);
+                }
+                break;
+
+            case GroupFragment.GROUP_TOKEN:
+                if (cookie != null && cookie instanceof GroupAdapter) {
+                    GroupAdapter adapter = (GroupAdapter) cookie;
                     adapter.changeCursor(cursor);
                 }
                 break;
         }
-
     }
 }

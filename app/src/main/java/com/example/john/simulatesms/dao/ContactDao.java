@@ -7,12 +7,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.example.john.simulatesms.activity.SMSActivity;
-import com.example.john.simulatesms.util.LogUtil;
-
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 /**

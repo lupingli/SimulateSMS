@@ -1,10 +1,9 @@
-package com.example.john.simulatesms.activity;
+package com.example.john.simulatesms.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.view.View;
@@ -19,7 +18,6 @@ import android.widget.Toast;
 
 import com.example.john.simulatesms.R;
 import com.example.john.simulatesms.adapter.AutoSearchAdapter;
-import com.example.john.simulatesms.dao.SimpleQueryHandler;
 import com.example.john.simulatesms.dao.SmsDao;
 
 public class SendNewSmsActivity extends BaseActivity {

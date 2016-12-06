@@ -7,7 +7,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.telephony.SmsManager;
 
-import com.example.john.simulatesms.activity.SMSActivity;
+import com.example.john.simulatesms.ui.activity.SMSActivity;
 import com.example.john.simulatesms.app.SimulateSMSApplication;
 import com.example.john.simulatesms.receiver.SmsReceiver;
 import com.example.john.simulatesms.util.ConstantUtil;
