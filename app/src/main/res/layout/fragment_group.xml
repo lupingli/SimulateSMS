@@ -9,7 +9,8 @@
         android:id="@+id/lv_group_content"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"></ListView>
+        android:layout_weight="1"
+        android:listSelector="@android:color/transparent"></ListView>
 
     <View
         android:layout_width="match_parent"

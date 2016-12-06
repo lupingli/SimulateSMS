@@ -7,11 +7,13 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.MailTo;
 import android.net.Uri;
+import android.support.annotation.RequiresPermission;
 
 import com.example.john.simulatesms.dao.GroupOpenHelper;
 
 public class GroupProvider extends ContentProvider {
     private final static String AUTHORITY = "com.cn.group.provider";
+    public final static Uri BASE_URI = Uri.parse("content://" + AUTHORITY);
     private static UriMatcher matcher;
     private final static int GROUP_ITEM = 0;
     private final static int GROUP_DIR = 1;
@@ -52,6 +54,7 @@ public class GroupProvider extends ContentProvider {
                 db.delete("group_mapping_thread", "_id=?", new String[]{group_mapping_thread_id});
                 break;
         }
+        getContext().getContentResolver().notifyChange(BASE_URI, null);
         return rowId;
     }
 
@@ -83,6 +86,7 @@ public class GroupProvider extends ContentProvider {
                 rowId = db.insert("group_mapping_thread", null, values);
                 break;
         }
+        getContext().getContentResolver().notifyChange(BASE_URI, null);
         return newUri.withAppendedPath(newUri, rowId.toString());
     }
 
@@ -112,9 +116,9 @@ public class GroupProvider extends ContentProvider {
 
             case GROUP_MAPPING_THREAD_DIR:
                 cursor = db.query("group_mapping_thread", projection, selection, selectionArgs, null, null, sortOrder);
-
                 break;
         }
+        cursor.setNotificationUri(getContext().getContentResolver(), BASE_URI);
         return cursor;
     }
 
@@ -139,6 +143,7 @@ public class GroupProvider extends ContentProvider {
                 rowId = db.update("group_mapping_thread", values, "_id=?", new String[]{group_mapping_thread_id});
                 break;
         }
+        getContext().getContentResolver().notifyChange(BASE_URI, null);
         return rowId;
     }
 }

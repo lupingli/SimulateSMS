@@ -70,13 +70,10 @@ public class SendNewSmsActivity extends BaseActivity {
         adapter.setFilterQueryProvider(new FilterQueryProvider() {
             @Override
             public Cursor runQuery(CharSequence charSequence) {
-                //LogUtil.d(SMSActivity.TAG, charSequence.toString());
                 constraint = charSequence.toString();
                 //异步处理查询效果
                 //模糊查询
                 String selection = "data1 like '%" + charSequence + "%'";
-                //simpleQueryHandler = new SimpleQueryHandler(getContentResolver());
-                //simpleQueryHandler.startQuery(QUERY_CONTACTS_TOKEN, adapter, ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, selection, null, null);
                 Cursor cursor = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, projection, selection, null, null);
                 return cursor;
             }

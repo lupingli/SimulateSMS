@@ -3,6 +3,7 @@ package com.example.john.simulatesms.dao;
 import android.content.AsyncQueryHandler;
 import android.content.ContentResolver;
 import android.database.Cursor;
+import android.widget.Adapter;
 import android.widget.CursorAdapter;
 
 import com.example.john.simulatesms.activity.ConversationDetailActivity;
@@ -39,12 +40,7 @@ public class SimpleQueryHandler extends AsyncQueryHandler {
                     adapter.changeCursor(cursor);
                 }
                 break;
-//            case SendNewSmsActivity.QUERY_CONTACTS_TOKEN:
-//                if (cookie != null && cookie instanceof AutoSearchAdapter) {
-//                    AutoSearchAdapter adapter = (AutoSearchAdapter) cookie;
-//                    adapter.changeCursor(cursor);
-//                }
-//                break;
         }
+
     }
 }
