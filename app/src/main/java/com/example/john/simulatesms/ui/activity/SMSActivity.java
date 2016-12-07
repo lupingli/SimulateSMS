@@ -1,12 +1,14 @@
 package com.example.john.simulatesms.ui.activity;
 
 import android.animation.ObjectAnimator;
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -125,6 +127,9 @@ public class SMSActivity extends BaseActivity {
 
             @Override
             public void onPageScrollStateChanged(int state) {
+                //隐藏输入法
+                InputMethodManager inputMethodManager = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(getWindow().getDecorView().getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
             }
         });
 

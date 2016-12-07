@@ -2,7 +2,12 @@ package com.example.john.simulatesms.adapter;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.support.v4.widget.CursorAdapter;
+import android.text.SpannableString;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -11,6 +16,7 @@ import android.widget.TextView;
 
 import com.example.john.simulatesms.R;
 import com.example.john.simulatesms.entity.Conversation;
+import com.example.john.simulatesms.util.StringUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +78,15 @@ public class ConversationAdapter extends CursorAdapter {
     public void bindView(View view, Context context, Cursor cursor) {
         MyViewHolder myViewHolder = getViewHolder(view);
         final Conversation conversation = Conversation.createFromCursor(cursor);
-        myViewHolder.tvPhoneNumber.setText(conversation.getName() != null ? conversation.getName() : conversation.getAddress());
+
+        SpannableStringBuilder ssb = new SpannableStringBuilder();
+        String numberStr = conversation.getName() != null ? conversation.getName() : conversation.getAddress();
+        String countStr = conversation.getMsg_count();
+        SpannableString ss = new SpannableString(countStr);
+        ss.setSpan(new ForegroundColorSpan(Color.GREEN), 0, countStr.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ssb.append(numberStr).append("(").append(ss).append(")");
+
+        myViewHolder.tvPhoneNumber.setText(ssb);
         myViewHolder.tvNewMsg.setText(conversation.getSnippet());
         myViewHolder.tvDate.setText(conversation.getDate());
         myViewHolder.ivAvatar.setImageBitmap(conversation.getAvatar());

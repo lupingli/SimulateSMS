@@ -1,12 +1,30 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".ui.fragment.ConversationFragment">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical"
+              tools:context=".ui.fragment.ConversationFragment">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="search"/>
+        android:background="@color/colorBlack"
+        android:padding="8dp">
 
-</FrameLayout>
+        <EditText
+            android:id="@+id/et_search_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorWhite"
+            android:drawableLeft="@drawable/ic_search_black_24dp"
+            android:singleLine="true"/>
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/search_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"></ListView>
+
+
+</LinearLayout>

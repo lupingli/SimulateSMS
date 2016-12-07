@@ -1,10 +1,14 @@
 package com.example.john.simulatesms.ui.fragment;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,32 +20,35 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.example.john.simulatesms.R;
-import com.example.john.simulatesms.dao.GroupDao;
-import com.example.john.simulatesms.dao.GroupMappingThreadDao;
-import com.example.john.simulatesms.dao.SmsDao;
-import com.example.john.simulatesms.dialog.InputDialog;
-import com.example.john.simulatesms.dialog.ListDialog;
-import com.example.john.simulatesms.entity.Group;
-import com.example.john.simulatesms.entity.GroupMappingThread;
-import com.example.john.simulatesms.ui.activity.ConversationDetailActivity;
-import com.example.john.simulatesms.ui.activity.SMSActivity;
-import com.example.john.simulatesms.ui.activity.SendNewSmsActivity;
 import com.example.john.simulatesms.adapter.ConversationAdapter;
 import com.example.john.simulatesms.app.SimulateSMSApplication;
+import com.example.john.simulatesms.dao.GroupDao;
+import com.example.john.simulatesms.dao.GroupMappingThreadDao;
 import com.example.john.simulatesms.dao.SimpleQueryHandler;
 import com.example.john.simulatesms.dialog.ConfirmDialog;
 import com.example.john.simulatesms.dialog.DeleteDialog;
+import com.example.john.simulatesms.dialog.ListDialog;
 import com.example.john.simulatesms.entity.Conversation;
+import com.example.john.simulatesms.entity.Group;
+import com.example.john.simulatesms.entity.GroupMappingThread;
 import com.example.john.simulatesms.interfaces.OnConfirmListener;
 import com.example.john.simulatesms.interfaces.OnDeleteListener;
+import com.example.john.simulatesms.ui.activity.ConversationDetailActivity;
+import com.example.john.simulatesms.ui.activity.SMSActivity;
+import com.example.john.simulatesms.ui.activity.SendNewSmsActivity;
 import com.example.john.simulatesms.util.ConstantUtil;
 import com.example.john.simulatesms.util.LogUtil;
 import com.nineoldandroids.view.ViewPropertyAnimator;
 
 import java.util.List;
 
+import kr.co.namee.permissiongen.PermissionFail;
+import kr.co.namee.permissiongen.PermissionGen;
+import kr.co.namee.permissiongen.PermissionSuccess;
+
 /**
  * Created by John on 2016/11/20.
+ * 显示会话界面
  */
 
 public class ConversationFragment extends BaseFragment {
@@ -110,6 +117,7 @@ public class ConversationFragment extends BaseFragment {
             }
         }
     };
+    private String[] projection;
 
     @Override
 
@@ -138,7 +146,7 @@ public class ConversationFragment extends BaseFragment {
         //listView设置适配器（CursorAdapter）
         listView.setAdapter(adapter);
         //重新构造查询的列
-        String[] projection = new String[]{
+        projection = new String[]{
                 "sms._id as _id",
                 "sms.thread_id as thread_id",
                 "sms.body as snippet",
@@ -147,8 +155,30 @@ public class ConversationFragment extends BaseFragment {
                 "sms.date as date"
         };
         simpleQueryHandler = new SimpleQueryHandler(getActivity().getContentResolver());
-        //
+        //android 6.0 申请系统权限
+        PermissionGen.with(getActivity()).addRequestCode(100).permissions(
+                Manifest.permission.SEND_SMS,
+                Manifest.permission.RECEIVE_SMS,
+                Manifest.permission.READ_CONTACTS,
+                Manifest.permission.READ_SMS
+        ).request();
+    }
+
+    @PermissionSuccess(requestCode = 100)
+    public void doSomething() {
         simpleQueryHandler.startQuery(QUERY_TOKEN, adapter, ConstantUtil.URI.CONVERSATION_URL, projection, null, null, "date desc");
+    }
+
+    @PermissionFail(requestCode = 100)
+    public void doFailSomething() {
+        Toast.makeText(getActivity(), "权限否定", Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        PermissionGen.onRequestPermissionsResult(getActivity(), requestCode, permissions, grantResults);
     }
 
     @Override

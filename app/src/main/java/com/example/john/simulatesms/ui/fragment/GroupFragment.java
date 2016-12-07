@@ -20,6 +20,7 @@ import com.example.john.simulatesms.dialog.InputDialog;
 import com.example.john.simulatesms.dialog.ListDialog;
 import com.example.john.simulatesms.entity.Group;
 import com.example.john.simulatesms.entity.GroupMappingThread;
+import com.example.john.simulatesms.ui.activity.GroupThreadActivity;
 import com.example.john.simulatesms.util.ConstantUtil;
 
 /**
@@ -68,7 +69,19 @@ public class GroupFragment extends BaseFragment {
                         }
                     }
                 });
-                return false;
+                return true;
+            }
+        });
+
+        lvGroupContent.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Group group = adapter.getSingleGroup(i);
+                if (group.getThread_count() > 0) {
+                    GroupThreadActivity.actionStart(getActivity(), group.getGroup_name(), group.get_id());
+                } else {
+                    Toast.makeText(getActivity(), "该分组没有添加会话", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
