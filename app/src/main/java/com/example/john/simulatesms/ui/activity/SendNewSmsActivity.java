@@ -1,10 +1,12 @@
 package com.example.john.simulatesms.ui.activity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.AutoCompleteTextView;
@@ -19,6 +21,8 @@ import android.widget.Toast;
 import com.example.john.simulatesms.R;
 import com.example.john.simulatesms.adapter.AutoSearchAdapter;
 import com.example.john.simulatesms.dao.SmsDao;
+import com.zhy.m.permission.MPermissions;
+import com.zhy.m.permission.PermissionGrant;
 
 public class SendNewSmsActivity extends BaseActivity {
 
@@ -95,13 +99,8 @@ public class SendNewSmsActivity extends BaseActivity {
                 this.finish();
                 break;
             case R.id.btn_send_new_sms:
-                String address = etSendPhone.getText().toString();
-                String content = etSendContent.getText().toString();
-                if (!TextUtils.isEmpty(address) && !TextUtils.isEmpty(content)) {
-                    SmsDao.sendSmsBySmsManager(this, address, content);
-                } else {
-                    Toast.makeText(this, "号码或短信内容不能为空", Toast.LENGTH_SHORT).show();
-                }
+                MPermissions.requestPermissions(this, 100,
+                        Manifest.permission.SEND_SMS);
                 break;
 
             case R.id.iv_contacts:
@@ -113,6 +112,23 @@ public class SendNewSmsActivity extends BaseActivity {
 
         }
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        MPermissions.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+    }
+
+    @PermissionGrant(100)
+    public void sendSms() {
+        String address = etSendPhone.getText().toString();
+        String content = etSendContent.getText().toString();
+        if (!TextUtils.isEmpty(address) && !TextUtils.isEmpty(content)) {
+            SmsDao.sendSmsBySmsManager(this, address, content);
+        } else {
+            Toast.makeText(this, "号码或短信内容不能为空", Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override

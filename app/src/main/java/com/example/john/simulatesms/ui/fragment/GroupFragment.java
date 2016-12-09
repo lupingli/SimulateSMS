@@ -3,6 +3,7 @@ package com.example.john.simulatesms.ui.fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import com.example.john.simulatesms.dialog.ListDialog;
 import com.example.john.simulatesms.entity.Group;
 import com.example.john.simulatesms.entity.GroupMappingThread;
 import com.example.john.simulatesms.ui.activity.GroupThreadActivity;
+import com.example.john.simulatesms.ui.activity.SMSActivity;
 import com.example.john.simulatesms.util.ConstantUtil;
 
 /**
@@ -32,7 +34,7 @@ public class GroupFragment extends BaseFragment {
 
     private ListView lvGroupContent;
     private Button btnCreateGroup;
-    public static GroupAdapter adapter;
+    private GroupAdapter adapter;
     private SimpleQueryHandler simpleQueryHandler;
 
 
@@ -78,6 +80,7 @@ public class GroupFragment extends BaseFragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 Group group = adapter.getSingleGroup(i);
                 if (group.getThread_count() > 0) {
+                    Log.d(SMSActivity.TAG, group.getGroup_name() + "-----" + group.get_id());
                     GroupThreadActivity.actionStart(getActivity(), group.getGroup_name(), group.get_id());
                 } else {
                     Toast.makeText(getActivity(), "该分组没有添加会话", Toast.LENGTH_SHORT).show();

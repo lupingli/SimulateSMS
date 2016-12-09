@@ -51,6 +51,7 @@ public class GroupThreadActivity extends BaseActivity {
         int groupId = intent.getIntExtra("groupId", -1);
         tvTitle.setText(title);
         adapter = new ConversationAdapter(this, null, CursorAdapter.FLAG_AUTO_REQUERY);
+
         listView.setAdapter(adapter);
         //重新构造查询的列
         String[] projection = new String[]{
@@ -61,6 +62,7 @@ public class GroupThreadActivity extends BaseActivity {
                 "sms.address as address",
                 "sms.date as date"
         };
+
         SimpleQueryHandler simpleQueryHandler = new SimpleQueryHandler(getContentResolver());
         simpleQueryHandler.startQuery(ConversationFragment.QUERY_TOKEN, adapter, ConstantUtil.URI.CONVERSATION_URL, projection, buildSelection(groupId), null, null);
 
@@ -77,7 +79,7 @@ public class GroupThreadActivity extends BaseActivity {
     private String buildSelection(int groupId) {
         String selection = "";
         selection += "thread_id in(";
-        Cursor cursor = getContentResolver().query(ConstantUtil.URI.GROUP_MAPPING_THREAD_URI, null, null, null, null);
+        Cursor cursor = getContentResolver().query(ConstantUtil.URI.GROUP_MAPPING_THREAD_URI, null, "group_id=?", new String[]{groupId + ""}, null);
         while (cursor.moveToNext()) {
             GroupMappingThread groupMappingThread = GroupMappingThread.createByCurosr(cursor);
             if (cursor.isLast()) {

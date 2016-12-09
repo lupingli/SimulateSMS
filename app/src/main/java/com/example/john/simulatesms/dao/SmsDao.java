@@ -65,7 +65,7 @@ public class SmsDao {
         for (String msg : msgs) {
             manager.sendTextMessage(address, null, msg, sentPendingIntent, null);
             //将短信插入到数据库
-            insertSms(msg, address);
+//            insertSms(msg, address);
         }
     }
 }

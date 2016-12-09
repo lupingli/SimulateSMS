@@ -2,6 +2,7 @@ package com.example.john.simulatesms.ui.activity;
 
 import android.animation.ObjectAnimator;
 import android.content.Context;
+import android.support.annotation.LayoutRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
@@ -46,25 +47,22 @@ public class SMSActivity extends BaseActivity {
     private LinearLayout llConversation;
     private LinearLayout llGroup;
     private LinearLayout llSearch;
-    private ConversationFragment conversationFragment;
-    private GroupFragment groupFragment;
-    private SearchFragment searchFragment;
 
 
     @Override
     public void initView() {
         setContentView(R.layout.activity_main);
-        viewPager = (ViewPager) findViewById(R.id.view_page);
-        viewLine = findViewById(R.id.view_line);
-        tvConversation = (TextView) findViewById(R.id.tv_conversation);
 
+        viewLine = findViewById(R.id.view_line);
+        viewPager = (ViewPager) findViewById(R.id.view_page);
+
+        tvConversation = (TextView) findViewById(R.id.tv_conversation);
         tvGroup = (TextView) findViewById(R.id.tv_group);
         tvSearch = (TextView) findViewById(R.id.tv_search);
 
         llConversation = (LinearLayout) findViewById(R.id.ll_conversation);
         llGroup = (LinearLayout) findViewById(R.id.ll_group);
         llSearch = (LinearLayout) findViewById(R.id.ll_search);
-
 
     }
 
@@ -78,12 +76,10 @@ public class SMSActivity extends BaseActivity {
 
         FragmentManager fm = getSupportFragmentManager();
         List<Fragment> fragments = new ArrayList<>();
-        conversationFragment = new ConversationFragment();
-        fragments.add(conversationFragment);
-        groupFragment = new GroupFragment();
-        fragments.add(groupFragment);
-        searchFragment = new SearchFragment();
-        fragments.add(searchFragment);
+
+        fragments.add(new ConversationFragment());
+        fragments.add(new GroupFragment());
+        fragments.add(new SearchFragment());
         mainPageAdapter = new MainPageAdapter(fm, fragments);
         viewPager.setAdapter(mainPageAdapter);
     }
@@ -94,22 +90,32 @@ public class SMSActivity extends BaseActivity {
      * 给滑动线设置1/3
      */
     private void initLineWidth() {
+        //窗口管理器
         WindowManager windowManager = getWindowManager();
+        //得到屏幕宽度
         screenWidth = windowManager.getDefaultDisplay().getWidth();
+
+        //得到控件布局参数
         ViewGroup.LayoutParams params = viewLine.getLayoutParams();
+
+        //设置线的长度
         params.width = (int) Math.floor(screenWidth / 3) - 2;
+
+        //将布局参数，设置给控件，是控件的宽度发生改变
         viewLine.setLayoutParams(params);
     }
 
     @Override
     public void initListener() {
-
+        //ViewPager控件的滑动监听
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            //页面滑动时触发事件
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 if (position != 2) {
                     ObjectAnimator.ofFloat(viewLine, "translationX", (float) Math.floor((position * screenWidth + positionOffsetPixels) / 3)).setDuration(0).start();
                 } else {
+                    //+2dp为了弥补像素损失
                     ObjectAnimator.ofFloat(viewLine, "translationX", (float) Math.floor((position * screenWidth + positionOffsetPixels) / 3) + 2).setDuration(0).start();
                 }
             }
@@ -122,9 +128,9 @@ public class SMSActivity extends BaseActivity {
             public void onPageSelected(int position) {
                 //选项卡的文字的颜色和大小
                 changeTextScale();
-
             }
 
+            //页面滑动状态改变
             @Override
             public void onPageScrollStateChanged(int state) {
                 //隐藏输入法
@@ -133,6 +139,7 @@ public class SMSActivity extends BaseActivity {
             }
         });
 
+        //注册监听
         llConversation.setOnClickListener(this);
         llGroup.setOnClickListener(this);
         llSearch.setOnClickListener(this);
@@ -143,12 +150,15 @@ public class SMSActivity extends BaseActivity {
      * 改变文字
      */
     private void changeTextScale() {
+        //得到ViewPage当前页面的索引
         int index = viewPager.getCurrentItem();
+
+        //设置动画
         tvConversation.setTextColor(getResources().getColor(index == 0 ? R.color.colorOrange : R.color.colorWhite));
         tvGroup.setTextColor(getResources().getColor(index == 1 ? R.color.colorOrange : R.color.colorWhite));
         tvSearch.setTextColor(getResources().getColor(index == 2 ? R.color.colorOrange : R.color.colorWhite));
 
-
+        //如果是第一个fragment，那么文字的宽度和高度放大1.2f
         if (index == 0) {
             ViewPropertyAnimator.animate(tvConversation).scaleX(1.2f).setDuration(animateDuration).start();
             ViewPropertyAnimator.animate(tvConversation).scaleY(1.2f).setDuration(animateDuration).start();
@@ -175,8 +185,6 @@ public class SMSActivity extends BaseActivity {
             ViewPropertyAnimator.animate(tvSearch).scaleX(1.0f).setDuration(animateDuration).start();
             ViewPropertyAnimator.animate(tvSearch).scaleY(1.0f).setDuration(animateDuration).start();
         }
-
-
     }
 
     @Override

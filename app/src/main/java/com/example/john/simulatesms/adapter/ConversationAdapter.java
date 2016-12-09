@@ -27,7 +27,7 @@ import java.util.List;
  * 控制数据显示
  */
 
-public class ConversationAdapter extends CursorAdapter {
+public class ConversationAdapter extends CursorAdapter  {
 
     /**
      * 是否显示选择菜单
@@ -37,6 +37,7 @@ public class ConversationAdapter extends CursorAdapter {
      * 记录选中的会话
      */
     private List<String> selectedConversation = new ArrayList<>();
+    private MyViewHolder myViewHolder;
 
     public boolean isShowSelected() {
         return isShowSelected;
@@ -76,7 +77,7 @@ public class ConversationAdapter extends CursorAdapter {
      */
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        MyViewHolder myViewHolder = getViewHolder(view);
+        myViewHolder = getViewHolder(view);
         final Conversation conversation = Conversation.createFromCursor(cursor);
 
         SpannableStringBuilder ssb = new SpannableStringBuilder();
@@ -118,6 +119,8 @@ public class ConversationAdapter extends CursorAdapter {
         }
         return myViewHolder;
     }
+
+
 
     /**
      * 管理视图中控件
@@ -169,7 +172,6 @@ public class ConversationAdapter extends CursorAdapter {
      * 选择所有的条目
      */
     public void selectedAllConversation() {
-
         Cursor cursor = getCursor();
         cursor.moveToPosition(-1);
         while (cursor.moveToNext()) {

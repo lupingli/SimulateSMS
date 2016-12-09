@@ -69,15 +69,13 @@ public class GroupDao {
         return name;
     }
 
-    public static String[] getAllGroup(ContentResolver contentResolver) {
-        List<String> names = new ArrayList<String>();
+    public static List<Group> getAllGroup(ContentResolver contentResolver) {
+        List<Group> groups = new ArrayList<Group>();
         Cursor cursor = contentResolver.query(ConstantUtil.URI.GROUP_URI, null, null, null, null, null);
         while (cursor.moveToNext()) {
-            names.add(Group.createGroupByCursor(cursor).getGroup_name());
+            groups.add(Group.createGroupByCursor(cursor));
         }
-        //list转换为数组
-        String[] array = new String[names.size()];
-        return names.toArray(array);
+        return groups;
     }
 
     public static Group getGroupById(ContentResolver contentResolver, int groupId) {

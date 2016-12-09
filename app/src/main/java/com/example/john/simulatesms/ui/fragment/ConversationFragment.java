@@ -1,14 +1,12 @@
 package com.example.john.simulatesms.ui.fragment;
 
 import android.Manifest;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,18 +31,17 @@ import com.example.john.simulatesms.entity.Group;
 import com.example.john.simulatesms.entity.GroupMappingThread;
 import com.example.john.simulatesms.interfaces.OnConfirmListener;
 import com.example.john.simulatesms.interfaces.OnDeleteListener;
+import com.example.john.simulatesms.ui.activity.BaseActivity;
 import com.example.john.simulatesms.ui.activity.ConversationDetailActivity;
 import com.example.john.simulatesms.ui.activity.SMSActivity;
 import com.example.john.simulatesms.ui.activity.SendNewSmsActivity;
 import com.example.john.simulatesms.util.ConstantUtil;
 import com.example.john.simulatesms.util.LogUtil;
 import com.nineoldandroids.view.ViewPropertyAnimator;
+import com.zhy.m.permission.MPermissions;
+import com.zhy.m.permission.PermissionGrant;
 
 import java.util.List;
-
-import kr.co.namee.permissiongen.PermissionFail;
-import kr.co.namee.permissiongen.PermissionGen;
-import kr.co.namee.permissiongen.PermissionSuccess;
 
 /**
  * Created by John on 2016/11/20.
@@ -141,7 +138,6 @@ public class ConversationFragment extends BaseFragment {
         LogUtil.d(SMSActivity.TAG, "test");
         //查询会话信息
         adapter = new ConversationAdapter(SimulateSMSApplication.getContext(), null, CursorAdapter.FLAG_AUTO_REQUERY);
-
         selectedConversations = adapter.getSelectedConversation();
         //listView设置适配器（CursorAdapter）
         listView.setAdapter(adapter);
@@ -155,30 +151,21 @@ public class ConversationFragment extends BaseFragment {
                 "sms.date as date"
         };
         simpleQueryHandler = new SimpleQueryHandler(getActivity().getContentResolver());
-        //android 6.0 申请系统权限
-        PermissionGen.with(getActivity()).addRequestCode(100).permissions(
-                Manifest.permission.SEND_SMS,
-                Manifest.permission.RECEIVE_SMS,
-                Manifest.permission.READ_CONTACTS,
-                Manifest.permission.READ_SMS
-        ).request();
+        MPermissions.requestPermissions(this, 100,
+                Manifest.permission.READ_SMS,
+                Manifest.permission.READ_CONTACTS
+        );
     }
 
-    @PermissionSuccess(requestCode = 100)
-    public void doSomething() {
+    @PermissionGrant(100)
+    public void startQuery() {
         simpleQueryHandler.startQuery(QUERY_TOKEN, adapter, ConstantUtil.URI.CONVERSATION_URL, projection, null, null, "date desc");
     }
 
-    @PermissionFail(requestCode = 100)
-    public void doFailSomething() {
-        Toast.makeText(getActivity(), "权限否定", Toast.LENGTH_SHORT).show();
-    }
-
-
     @Override
-
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        PermissionGen.onRequestPermissionsResult(getActivity(), requestCode, permissions, grantResults);
+        MPermissions.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
@@ -212,14 +199,20 @@ public class ConversationFragment extends BaseFragment {
                         final Conversation conversation = adapter.getConversation(i);
                         LogUtil.d(SMSActivity.TAG, "thread_id==" + conversation.getThread_id());
                         String name = GroupMappingThreadDao.getGroupNameByThreadId(getActivity().getContentResolver(), Integer.valueOf(conversation.getThread_id()));
-
                         LogUtil.d(SMSActivity.TAG, "name===" + name);
                         if (name == null) {
+                            //获取到选择的分组
+                            final List<Group> groups = GroupDao.getAllGroup(getActivity().getContentResolver());
+                            String[] datas = new String[groups.size()];
+                            for (int index = 0; index < groups.size(); index++) {
+                                datas[index] = groups.get(index).getGroup_name();
+                            }
+
                             //没有找到
-                            ListDialog.showDialog(getActivity(), "请选择分组", GroupDao.getAllGroup(getActivity().getContentResolver()), new ListDialog.OnListDialogListener() {
+                            ListDialog.showDialog(getActivity(), "请选择分组", datas, new ListDialog.OnListDialogListener() {
                                 @Override
                                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                    Group group = GroupFragment.adapter.getSingleGroup(i);
+                                    Group group = GroupDao.getGroupById(getActivity().getContentResolver(), groups.get(i).get_id());
                                     group.setThread_count(group.getThread_count() + 1);
                                     GroupDao.update(getActivity().getContentResolver(), group);
                                     //

@@ -17,5 +17,4 @@
         android:fastScrollEnabled="true"
         android:listSelector="@android:color/transparent"></ListView>
 
-
 </LinearLayout>

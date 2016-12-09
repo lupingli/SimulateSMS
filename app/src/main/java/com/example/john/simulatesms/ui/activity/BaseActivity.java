@@ -1,13 +1,23 @@
 package com.example.john.simulatesms.ui.activity;
 
-import android.support.v7.app.AppCompatActivity;
+import android.Manifest;
+import android.database.sqlite.SQLiteBindOrColumnIndexOutOfRangeException;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Toast;
+
+import com.zhy.m.permission.MPermissions;
+import com.zhy.m.permission.PermissionDenied;
+import com.zhy.m.permission.PermissionGrant;
+import com.zhy.m.permission.ShowRequestPermissionRationale;
 
 /**
  * 所有活动基类
  */
 public abstract class BaseActivity extends AppCompatActivity implements View.OnClickListener {
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -15,6 +25,7 @@ public abstract class BaseActivity extends AppCompatActivity implements View.OnC
         initView();
         initData();
         initListener();
+
     }
 
     /**

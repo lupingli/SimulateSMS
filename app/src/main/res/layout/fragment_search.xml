@@ -24,7 +24,10 @@
     <ListView
         android:id="@+id/search_list_view"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></ListView>
+        android:layout_height="wrap_content"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="8dp"
+        android:listSelector="@android:color/transparent"></ListView>
 
 
 </LinearLayout>

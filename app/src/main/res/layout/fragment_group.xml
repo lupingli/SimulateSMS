@@ -10,6 +10,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:divider="@android:color/transparent"
+        android:dividerHeight="8dp"
         android:listSelector="@android:color/transparent"></ListView>
 
     <View

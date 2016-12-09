@@ -16,9 +16,9 @@ public abstract class BaseFragment extends Fragment implements View.OnClickListe
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         return initView(inflater, container, savedInstanceState);
     }
-
 
     /**
      * 当fragment已经被完全创建好的时候调用
