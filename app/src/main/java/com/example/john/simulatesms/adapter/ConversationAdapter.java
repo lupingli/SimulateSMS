@@ -27,7 +27,7 @@ import java.util.List;
  * 控制数据显示
  */
 
-public class ConversationAdapter extends CursorAdapter  {
+public class ConversationAdapter extends CursorAdapter {
 
     /**
      * 是否显示选择菜单
@@ -83,11 +83,13 @@ public class ConversationAdapter extends CursorAdapter  {
         SpannableStringBuilder ssb = new SpannableStringBuilder();
         String numberStr = conversation.getName() != null ? conversation.getName() : conversation.getAddress();
         String countStr = conversation.getMsg_count();
-        SpannableString ss = new SpannableString(countStr);
-        ss.setSpan(new ForegroundColorSpan(Color.GREEN), 0, countStr.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        ssb.append(numberStr).append("(").append(ss).append(")");
+        if (numberStr != null && countStr != null) {
+            SpannableString ss = new SpannableString(countStr);
+            ss.setSpan(new ForegroundColorSpan(Color.GREEN), 0, countStr.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+            ssb.append(numberStr).append("(").append(ss).append(")");
+            myViewHolder.tvPhoneNumber.setText(ssb);
+        }
 
-        myViewHolder.tvPhoneNumber.setText(ssb);
         myViewHolder.tvNewMsg.setText(conversation.getSnippet());
         myViewHolder.tvDate.setText(conversation.getDate());
         myViewHolder.ivAvatar.setImageBitmap(conversation.getAvatar());
@@ -119,7 +121,6 @@ public class ConversationAdapter extends CursorAdapter  {
         }
         return myViewHolder;
     }
-
 
 
     /**
